@@ -9,6 +9,55 @@ describe("A Deferred", function () {
   beforeEach(function () {
     deferred = new Deferred();
   });
+  
+  it("will throw an error if rejected with an Error", function () {
+    var error = new Error("the sting of rejection");
+    
+    expect(function () {
+      deferred.reject(error);
+    }).toThrow(error);
+  });
+  
+  it("will throw an error with a rejection comment if rejected", function () {
+    expect(function () {
+      deferred.reject("you are the weakest link");
+    }).toThrow(new Error("you are the weakest link"));
+  });
+  
+  it("cannot be resolved after it has been rejected", function () {
+    var resolved = new WatchedValue(false);
+    
+    deferred.then(resolved.willBe(true));
+    try {
+      deferred.reject();
+    } catch (error) {
+    }
+    expect(resolved.value()).toBeFalsy();
+    deferred.resolve();
+    
+    expect(resolved.value()).toBeFalsy();
+  });
+  
+  it("cannot be rejected after it has been resolved", function () {
+    var resolution = new WatchedValue();
+    
+    deferred.resolve(42);
+    deferred.reject();
+    expect(resolution.value()).toBeUndefined();
+    deferred.then(resolution.update);
+    
+    expect(resolution.value()).toEqual(42);
+  });
+  
+  it("can have a custom error handler", function () {
+    var failed = new WatchedValue(false);
+    
+    deferred.error = failed.willBe(true);
+    expect(failed.value()).toBeFalsy();
+    deferred.reject();
+    
+    expect(failed.value()).toBeTruthy();
+  });
 
   it("can schedule a callback to be handled in the future", function () {
     var resolved = false;
@@ -226,6 +275,18 @@ describe("A Deferred", function () {
     });
   });
   
+  it("can wait for a condition that is already true before resolving", function () {
+    var resolved = new WatchedValue(false),
+        triggered = new WatchedValue(true),
+        deferred;
+        
+    deferred = Deferred.waitFor(triggered.toBe().truthy());
+    expect(resolved.value()).toBeFalsy();
+    deferred.then(resolved.willBe(true));
+    expect(triggered.value()).toBeTruthy();
+    expect(resolved.value()).toBeTruthy();
+  });
+  
   it("can wait for a specified condition before resolving with a value", function () {
     var resolution = new WatchedValue(0),
         value = new WatchedValue(),
@@ -244,6 +305,30 @@ describe("A Deferred", function () {
     runs(function () {
       expect(value.value()).toEqual(42);
     });
+  });
+  
+  it("will throw an error if too much time elapses before a condition is satisfied", function () {
+    var timedOut = new WatchedValue(false),
+        triggered = new WatchedValue(false);
+    
+    runs(function () {
+      deferred = Deferred.waitFor(triggered.toBe().truthy(), 1000);
+      deferred.error = timedOut.willBe(true);
+    });
+    waitsFor(timedOut.toBe().truthy(), "timeout", 2000);
+  });
+  
+  it("will throw an error if too much time elapses before resolution with a value", function () {
+    var timedOut = new WatchedValue(false),
+        triggered = new WatchedValue(false);
+    
+    runs(function () {
+      deferred = Deferred.waitFor(triggered.toBe().truthy(), function () {
+          return 5;
+        }, 1000);
+      deferred.error = timedOut.willBe(true);
+    });
+    waitsFor(timedOut.toBe().truthy(), "timeout", 2000);
   });
 
 });

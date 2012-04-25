@@ -64,6 +64,16 @@ describe("Iterator", function () {
     expect(child.hasOwnProperty('foo')).toBeFalsy();
     expect(parent.isPrototypeOf(child));
   });
+  
+  it("can mix properties from other objects into a given object", function () {
+    var one = { foo: 'bar' },
+        two = { hello: 'world' },
+        three = { five: 5 },
+        mixed = Iterator.mixin(one, two, three);
+        
+    expect(mixed).toEqual({ foo: 'bar', hello: 'world', five: 5 });
+    expect(mixed).toBe(one);
+  });
 
 });
 
@@ -130,6 +140,14 @@ describe("An Iterator", function () {
     });
     expect(child.hasOwnProperty('foo')).toBeFalsy();
     expect(parent.isPrototypeOf(child));
+  });
+  
+  it("can project its properties onto another object", function () {
+    var object = { foo: 'bar' },
+        projection = iterator.inject(object);
+        
+    expect(projection).toEqual({ foo: 'bar', one: 1, two: 2, three: 3 });
+    expect(projection).toBe(object);
   });
 
 });

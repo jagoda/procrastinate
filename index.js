@@ -1,5 +1,7 @@
-exports.Deferred = require('./lib/Deferred');
+module.exports = {
 
-exports.Iterator = require('./lib/Iterator');
+  Deferred: require('./lib/Deferred'),
+  Iterator: require('./lib/Iterator'),
+  WatchedValue: require('./lib/WatchedValue')
 
-exports.WatchedValue = require('./lib/WatchedValue');
+};

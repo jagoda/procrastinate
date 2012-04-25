@@ -21,6 +21,14 @@ describe("A WatchedValue", function () {
     expect(watchedValue.value()).toEqual('five');
   });
   
+  it("can have its value change by an asynchronoul function", function () {
+    runs(function () {
+      expect(watchedValue.value()).toEqual(5);
+      setTimeout(watchedValue.update, 1000);
+    });
+    waitsFor(watchedValue.toNotBe().defined(), "value to change", 2000);
+  });
+  
   it("can change its value in the future", function () {
     var changeValue = watchedValue.willBe('five');
     
