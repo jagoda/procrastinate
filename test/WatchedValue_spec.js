@@ -21,7 +21,7 @@ describe("A WatchedValue", function () {
     expect(watchedValue.value()).toEqual('five');
   });
   
-  it("can have its value change by an asynchronoul function", function () {
+  it("can have its value changed by an asynchronous function", function () {
     runs(function () {
       expect(watchedValue.value()).toEqual(5);
       setTimeout(watchedValue.update, 1000);
