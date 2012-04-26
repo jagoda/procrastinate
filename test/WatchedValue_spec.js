@@ -90,6 +90,30 @@ describe("A WatchedValue", function () {
     expect(isNotNotEqual()).toBeFalsy();
   });
   
+  it("can negate trigger conditions", function () {
+    var resolved = new WatchedValue(false);
+    
+    WatchedValue.when(watchedValue).is().not().equalTo(5).
+      then(resolved.willBe(true));
+    expect(watchedValue.value()).toEqual(5);
+    expect(resolved.value()).toBeFalsy();
+    watchedValue.update('five');
+    expect(watchedValue.value()).toEqual('five');
+    expect(resolved.value()).toBeTruthy();
+  });
+  
+  it("can double negate trigger conditions", function () {
+    var resolved = new WatchedValue(false);
+    
+    WatchedValue.when(watchedValue).is().not().not().equalTo('five').
+      then(resolved.willBe(true));
+    expect(watchedValue.value()).toEqual(5);
+    expect(resolved.value()).toBeFalsy();
+    watchedValue.update('five');
+    expect(watchedValue.value()).toEqual('five');
+    expect(resolved.value()).toBeTruthy();
+  });
+  
   it("can check if the value is defined", function () {
     expect(watchedValue.is().defined()).toBeTruthy();
     watchedValue.update();

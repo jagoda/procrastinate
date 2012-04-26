@@ -59,7 +59,7 @@ describe("A Deferred", function () {
   it("can have a custom error handler", function () {
     var failed = new WatchedValue(false);
     
-    deferred.error = failed.willBe(true);
+    deferred.otherwise(failed.willBe(true));
     expect(failed.value()).toBeFalsy();
     deferred.reject();
     
