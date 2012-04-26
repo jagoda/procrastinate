@@ -68,6 +68,18 @@ describe("A WatchedValue", function () {
     expect(isEqual()).toBeTruthy();
   });
   
+  it("can trigger an action when equality is satisfied", function () {
+    var resolved = new WatchedValue(false);
+    
+    WatchedValue.when(watchedValue).is().equalTo('five').
+      then(resolved.willBe(true));
+    expect(watchedValue.value()).toEqual(5);
+    expect(resolved.value()).toBeFalsy();
+    watchedValue.update('five');
+    expect(watchedValue.value()).toEqual('five');
+    expect(resolved.value()).toBeTruthy();
+  });
+  
   it("can negate future tests", function () {
     var isEqual = watchedValue.toBe().equalTo('five'),
         isNotEqual = watchedValue.toBe().not().equalTo('five'),
