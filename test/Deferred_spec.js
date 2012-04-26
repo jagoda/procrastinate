@@ -49,6 +49,13 @@ describe("A Deferred", function () {
     expect(resolution.value()).toEqual(42);
   });
   
+  it("cannot be rejected from a callback", function () {
+    deferred.then(function () {
+      deferred.reject("was rejected from a callback");
+    });
+    deferred.resolve();
+  });
+  
   it("can have a custom error handler", function () {
     var failed = new WatchedValue(false);
     
@@ -205,7 +212,7 @@ describe("A Deferred", function () {
     
     runs(function () {
       var postDeferred = deferred.then(function (value) {
-        var resolveNext = this.resolveNext;
+        var resolveNext = this.next.resolve;
         
         resolution.update(resolution.value() + value);
         setTimeout(function () { resolveNext(3); }, 1000);
@@ -226,7 +233,7 @@ describe("A Deferred", function () {
         
     runs(function () {
       var postDeferred = deferred.then(function (value) {
-        var resolveNext = this.resolveNext;
+        var resolveNext = this.next.resolve;
         
         resolution1.update(resolution1.value() + value);
         setTimeout(function () { resolveNext(2); }, 1000);
@@ -237,7 +244,7 @@ describe("A Deferred", function () {
     });
     runs(function () {
       var postDeferred = deferred.then(function (value) {
-        var resolveNext = this.resolveNext;
+        var resolveNext = this.next.resolve;
         
         resolution2.update(resolution2.value() + value);
         setTimeout(function () { resolveNext(3); }, 1000);
@@ -255,6 +262,20 @@ describe("A Deferred", function () {
     });
     waitsFor(resolution1.toBe().equalTo(6), "chain 1 to complete", 2000);
     waitsFor(resolution2.toBe().equalTo(7), "chain 2 to complete", 2000);
+  });
+  
+  it("can manipulate the next deferred in the chain from a callback", function () {
+    var resolution;
+    
+    deferred.then(function (value) {
+      this.next.then(function (value) {
+        resolution = value + 1;
+      });
+      this.next.resolve(value + 1);
+    });
+    deferred.resolve(40);
+    
+    expect(resolution).toEqual(42);
   });
   
   it("can wait for a specified condition before resolving", function () {
