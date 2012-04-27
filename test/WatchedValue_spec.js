@@ -69,15 +69,15 @@ describe("A WatchedValue", function () {
   });
   
   it("can trigger an action when equality is satisfied", function () {
-    var resolved = new WatchedValue(false);
+    var result = new WatchedValue();
     
     WatchedValue.when(watchedValue).is().equalTo('five').
-      then(resolved.willBe(true));
+      then(result.update);
     expect(watchedValue.value()).toEqual(5);
-    expect(resolved.value()).toBeFalsy();
+    expect(result.value()).toBeUndefined();
     watchedValue.update('five');
     expect(watchedValue.value()).toEqual('five');
-    expect(resolved.value()).toBeTruthy();
+    expect(result.value()).toEqual('five');
   });
   
   it("can negate future tests", function () {
@@ -91,27 +91,27 @@ describe("A WatchedValue", function () {
   });
   
   it("can negate trigger conditions", function () {
-    var resolved = new WatchedValue(false);
+    var result = new WatchedValue();
     
     WatchedValue.when(watchedValue).is().not().equalTo(5).
-      then(resolved.willBe(true));
+      then(result.update);
     expect(watchedValue.value()).toEqual(5);
-    expect(resolved.value()).toBeFalsy();
+    expect(result.value()).toBeUndefined();
     watchedValue.update('five');
     expect(watchedValue.value()).toEqual('five');
-    expect(resolved.value()).toBeTruthy();
+    expect(result.value()).toEqual('five');
   });
   
   it("can double negate trigger conditions", function () {
-    var resolved = new WatchedValue(false);
+    var result = new WatchedValue();
     
     WatchedValue.when(watchedValue).is().not().not().equalTo('five').
-      then(resolved.willBe(true));
+      then(result.update);
     expect(watchedValue.value()).toEqual(5);
-    expect(resolved.value()).toBeFalsy();
+    expect(result.value()).toBeUndefined();
     watchedValue.update('five');
     expect(watchedValue.value()).toEqual('five');
-    expect(resolved.value()).toBeTruthy();
+    expect(result.value()).toEqual('five');
   });
   
   it("can check if the value is defined", function () {
