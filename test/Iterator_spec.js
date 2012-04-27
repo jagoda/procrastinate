@@ -74,6 +74,25 @@ describe("Iterator", function () {
     expect(mixed).toEqual({ foo: 'bar', hello: 'world', five: 5 });
     expect(mixed).toBe(one);
   });
+  
+  it("can create a copy of an object only including filtered propreties", function () {
+    var filteredCopy = Iterator.filter(subject, function (key, value) {
+      return value == 2;
+    });
+    
+    expect(filteredCopy).toEqual({ two: 2 });
+  });
+  
+  it("can create a filtered copy with a given prototype", function () {
+    var parent = { foo: 'bar' },
+        child = Iterator.filter(subject, function (key, value) {
+          return value == 3;
+        }, parent);
+        
+    expect(child).toEqual({ foo: 'bar', three: 3 });
+    expect(child.hasOwnProperty('foo')).toBeFalsy();
+    expect(parent.isPrototypeOf(child)).toBeTruthy();
+  });
 
 });
 
@@ -148,6 +167,25 @@ describe("An Iterator", function () {
         
     expect(projection).toEqual({ foo: 'bar', one: 1, two: 2, three: 3 });
     expect(projection).toBe(object);
+  });
+  
+  it("can create a new object with filtered values", function () {
+    var filteredCopy = iterator.filter(function (key, value) {
+      return value == 2;
+    });
+    
+    expect(filteredCopy).toEqual({ two: 2 });
+  });
+  
+    it("can create a filtered copy with a given prototype", function () {
+    var parent = { foo: 'bar' },
+        child = iterator.filter(function (key, value) {
+          return value == 3;
+        }, parent);
+        
+    expect(child).toEqual({ foo: 'bar', three: 3 });
+    expect(child.hasOwnProperty('foo')).toBeFalsy();
+    expect(parent.isPrototypeOf(child)).toBeTruthy();
   });
 
 });
