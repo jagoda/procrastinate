@@ -210,27 +210,46 @@ describe("A Deferred", function () {
   it("can be completed successfully by an asynchronous function", function () {
     var result = new WatchedValue();
     
+    function complete (callback) {
+      callback(null, 42);
+    }
+    
     runs(function () {
       deferred.then(result.update);
       setTimeout(function () {
-        deferred.complete(null, 42);
+        complete(deferred.complete);
       }, 1000);
       expect(result.value()).toBeUndefined();
     });
-    waitsFor(result.toBe().equalTo(42), "deferred to resolve", 2000);
+    waitsFor(result.toBe().equalTo(42), "deferred to complete", 2000);
   });
   
   it("can be completed with an error by an asynchronous function", function () {
     var rejected = new WatchedValue(false);
     
+    function complete (callback) {
+      callback(new Error());
+    }
+    
     runs(function () {
       deferred.otherwise(rejected.willBe(true));
       setTimeout(function () {
-        deferred.complete(new Error());
-      }, 1000);
+          complete(deferred.complete)
+        }, 1000);
       expect(rejected.value()).toBeFalsy();
     });
-    waitsFor(rejected.toBe().truthy(), "deferred to resolve", 2000);
+    waitsFor(rejected.toBe().truthy(), "deferred to complete", 2000);
+  });
+  
+  it("can be rejected by an asynchronous function", function () {
+    var rejected = new WatchedValue(false);
+    
+    runs(function () {
+      deferred.otherwise(rejected.willBe(true));
+      setTimeout(deferred.reject, 1000);
+      expect(rejected.value()).toBeFalsy();
+    });
+    waitsFor(rejected.toBe().truthy(), "deferred to complete", 2000);
   });
   
   it("can chain multiple asynchronous calls", function () {
