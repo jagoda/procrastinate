@@ -207,6 +207,32 @@ describe("A Deferred", function () {
     waitsFor(resolved.toBe().truthy(), "deferred to resolve", 2000);
   });
   
+  it("can be completed successfully by an asynchronous function", function () {
+    var result = new WatchedValue();
+    
+    runs(function () {
+      deferred.then(result.update);
+      setTimeout(function () {
+        deferred.complete(null, 42);
+      }, 1000);
+      expect(result.value()).toBeUndefined();
+    });
+    waitsFor(result.toBe().equalTo(42), "deferred to resolve", 2000);
+  });
+  
+  it("can be completed with an error by an asynchronous function", function () {
+    var rejected = new WatchedValue(false);
+    
+    runs(function () {
+      deferred.otherwise(rejected.willBe(true));
+      setTimeout(function () {
+        deferred.complete(new Error());
+      }, 1000);
+      expect(rejected.value()).toBeFalsy();
+    });
+    waitsFor(rejected.toBe().truthy(), "deferred to resolve", 2000);
+  });
+  
   it("can chain multiple asynchronous calls", function () {
     var resolution = new WatchedValue(0);
     
