@@ -89,6 +89,15 @@ describe("A WatchedValue", function () {
     expect(result.value()).toEqual(5);
   });
   
+  it("can trigger an action even when the update method is bound before hand", function () {
+    var result = new WatchedValue(true),
+        update = watchedValue.update;
+        
+    WatchedValue.when(watchedValue).is().falsy().then(result.update);
+    update();
+    expect(result.value()).toBeUndefined();
+  });
+  
   it("can negate future tests", function () {
     var isEqual = watchedValue.toBe().equalTo('five'),
         isNotEqual = watchedValue.toBe().not().equalTo('five'),
