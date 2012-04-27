@@ -155,6 +155,24 @@ describe("A WatchedValue", function () {
     expect(isDefined()).toBeFalsy();
   });
   
+  it("can trigger an action when the value is defined", function () {
+    var result = new WatchedValue();
+    
+    watchedValue.update();
+    WatchedValue.when(watchedValue).is().defined().then(result.update);
+    expect(result.value()).toBeUndefined();
+    watchedValue.update(42);
+    expect(result.value()).toEqual(42);
+  });
+  
+  it("can trigger an action after the value is already defined", function () {
+    var result = new WatchedValue();
+    
+    expect(watchedValue.value()).toEqual(5);
+    WatchedValue.when(watchedValue).is().defined().then(result.update);
+    expect(result.value()).toEqual(5);
+  });
+  
   it("can check if the value is falsy", function () {
     expect(watchedValue.is().falsy()).toBeFalsy();
     watchedValue.update();
@@ -169,6 +187,23 @@ describe("A WatchedValue", function () {
     expect(isFalsy()).toBeTruthy();
   });
   
+  it("can trigger an action when the value is falsy", function () {
+    var result = new WatchedValue(true);
+    
+    expect(watchedValue.value()).toBeTruthy();
+    WatchedValue.when(watchedValue).is().falsy().then(result.update);
+    watchedValue.update(false);
+    expect(result.value()).toBe(false);
+  });
+  
+  it("can trigger an action when the value is already falsy", function () {
+    var result = new WatchedValue(true);
+    
+    watchedValue.update()
+    WatchedValue.when(watchedValue).is().falsy().then(result.update);
+    expect(result.value()).toBeUndefined();
+  });
+  
   it("can check if the value is truthy", function () {
     expect(watchedValue.is().truthy()).toBeTruthy();
     watchedValue.update();
@@ -181,6 +216,23 @@ describe("A WatchedValue", function () {
     expect(isTruthy()).toBeTruthy();
     watchedValue.update();
     expect(isTruthy()).toBeFalsy();
+  });
+  
+  it("can trigger an action when the value is truthy", function () {
+    var result = new WatchedValue();
+    
+    watchedValue.update();
+    WatchedValue.when(watchedValue).is().truthy().then(result.update);
+    expect(result.value()).toBeUndefined();
+    watchedValue.update(1);
+    expect(result.value()).toEqual(1);
+  });
+  
+  it("can trigger an action when the value is already truthy", function () {
+    var result = new WatchedValue();
+    
+    WatchedValue.when(watchedValue).is().truthy().then(result.update);
+    expect(result.value()).toEqual(5);
   });
 
 });
