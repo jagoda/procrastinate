@@ -98,6 +98,64 @@ describe("A WatchedValue", function () {
     expect(result.value()).toBeUndefined();
   });
   
+  it("can handle multiple triggers", function () {
+    var triggered1 = new WatchedValue(false),
+        triggered2 = new WatchedValue(false);
+        
+    WatchedValue.when(watchedValue).is().equalTo(42).then(triggered1.update);
+    WatchedValue.when(watchedValue).is().equalTo(43).then(triggered2.update);
+    expect(watchedValue.value()).toEqual(5);
+    expect(triggered1.value()).toBeFalsy();
+    expect(triggered2.value()).toBeFalsy();
+    
+    watchedValue.update(43);
+    expect(watchedValue.value()).toEqual(43);
+    expect(triggered1.value()).toBeFalsy();
+    expect(triggered2.value()).toEqual(43);
+    
+    watchedValue.update(42);
+    expect(watchedValue.value()).toEqual(42);
+    expect(triggered1.value()).toEqual(42);
+    expect(triggered2.value()).toEqual(43);
+  });
+  
+  it("can handle multiple negated triggers", function () {
+    var triggered1 = new WatchedValue(false),
+        triggered2 = new WatchedValue(false);
+        
+    WatchedValue.when(watchedValue).is().not().truthy().then(triggered1.update);
+    WatchedValue.when(watchedValue).is().not().equalTo(5).then(triggered2.update);
+    expect(watchedValue.value()).toEqual(5);
+    expect(triggered1.value()).toBeFalsy();
+    expect(triggered2.value()).toBeFalsy();
+    
+    watchedValue.update('');
+    expect(watchedValue.value()).toBe('');
+    expect(triggered1.value()).toEqual('');
+    expect(triggered2.value()).toEqual('');
+  });
+  
+  it("can handled multiple mixed triggers", function () {
+    var triggered1 = new WatchedValue(false),
+        triggered2 = new WatchedValue(false);
+        
+    WatchedValue.when(watchedValue).is().not().equalTo(5).then(triggered1.update);
+    WatchedValue.when(watchedValue).is().equalTo(42).then(triggered2.update);
+    expect(watchedValue.value()).toEqual(5);
+    expect(triggered1.value()).toBeFalsy();
+    expect(triggered2.value()).toBeFalsy();
+    
+    watchedValue.update(3);
+    expect(watchedValue.value()).toEqual(3);
+    expect(triggered1.value()).toEqual(3);
+    expect(triggered2.value()).toBeFalsy();
+    
+    watchedValue.update(42);
+    expect(watchedValue.value()).toEqual(42);
+    expect(triggered1.value()).toEqual(3);
+    expect(triggered2.value()).toEqual(42);
+  });
+  
   it("can negate future tests", function () {
     var isEqual = watchedValue.toBe().equalTo('five'),
         isNotEqual = watchedValue.toBe().not().equalTo('five'),
