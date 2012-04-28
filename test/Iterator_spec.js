@@ -77,7 +77,6 @@ describe("Iterator", function () {
   
   it("can create a copy of an object only including filtered propreties", function () {
     var filteredCopy = Iterator.filter(subject, function (key, value) {
-      console.log(key, value, this[key]);
       return this[key] == 2 && value == 2;
     });
     

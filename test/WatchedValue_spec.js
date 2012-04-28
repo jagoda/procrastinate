@@ -119,6 +119,23 @@ describe("A WatchedValue", function () {
     expect(triggered2.value()).toEqual(43);
   });
   
+  it("handles triggers in the order registered", function () {
+    var values = [];
+    
+    WatchedValue.when(watchedValue).is().equalTo(42).then(function () {
+      values.push(1);
+    });
+    WatchedValue.when(watchedValue).is().equalTo(42).then(function () {
+      values.push(2);
+    });
+    expect(watchedValue.value()).toEqual(5);
+    expect(values).toEqual([]);
+    
+    watchedValue.update(42);
+    expect(watchedValue.value()).toEqual(42);
+    expect(values).toEqual([ 1, 2 ]);
+  });
+  
   it("can handle multiple negated triggers", function () {
     var triggered1 = new WatchedValue(false),
         triggered2 = new WatchedValue(false);
