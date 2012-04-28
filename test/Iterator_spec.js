@@ -77,7 +77,8 @@ describe("Iterator", function () {
   
   it("can create a copy of an object only including filtered propreties", function () {
     var filteredCopy = Iterator.filter(subject, function (key, value) {
-      return value == 2;
+      console.log(key, value, this[key]);
+      return this[key] == 2 && value == 2;
     });
     
     expect(filteredCopy).toEqual({ two: 2 });
@@ -171,13 +172,13 @@ describe("An Iterator", function () {
   
   it("can create a new object with filtered values", function () {
     var filteredCopy = iterator.filter(function (key, value) {
-      return value == 2;
+      return this[key] == 2 && value == 2;
     });
     
     expect(filteredCopy).toEqual({ two: 2 });
   });
   
-    it("can create a filtered copy with a given prototype", function () {
+  it("can create a filtered copy with a given prototype", function () {
     var parent = { foo: 'bar' },
         child = iterator.filter(function (key, value) {
           return value == 3;
