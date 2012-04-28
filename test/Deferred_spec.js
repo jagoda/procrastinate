@@ -396,5 +396,30 @@ describe("A Deferred", function () {
     });
     waitsFor(timedOut.toBe().truthy(), "timeout", 2000);
   });
+  
+  it("can wait for other Deferreds to resolve", function () {
+    var deferred1 = new Deferred(),
+        deferred2 = new Deferred(),
+        value1 = new WatchedValue(),
+        value2 = new WatchedValue(),
+        value3 = new WatchedValue();
+        
+    deferred1.then(value1.update);
+    deferred2.then(value2.update);
+    deferred = Deferred.after(deferred1, deferred2).then(value3.update);
+    expect(value1.value()).toBeUndefined();
+    expect(value2.value()).toBeUndefined();
+    expect(value3.value()).toBeUndefined();
+    
+    deferred1.resolve(5);
+    expect(value1.value()).toEqual(5);
+    expect(value2.value()).toBeUndefined();
+    expect(value3.value()).toBeUndefined();
+    
+    deferred2.resolve('five');
+    expect(value1.value()).toEqual(5);
+    expect(value2.value()).toEqual('five');
+    expect(value3.value()).toEqual([ 5, 'five' ]);
+  });
 
 });
