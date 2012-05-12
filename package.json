@@ -2,7 +2,7 @@
   "author": "Jeff Jagoda <jeffrey.jagoda@gmail.com>",
   "name": "procrastinate",
   "description": "Utilities for asynchronous programming in JavaScript.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "url": ""
   },
