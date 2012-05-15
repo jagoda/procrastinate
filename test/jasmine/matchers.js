@@ -1,17 +1,18 @@
 var matchers = module.exports;
 
 
+beforeEach(function () {
+  this.addMatchers(matchers);
+});
+
+
 matchers.toBeSimilarTo = function (expected) {
   var actual = this.actual,
-      isSimilar = true,
       key;
       
   for (key in expected) {
-    if (actual[key] != expected[key]) {
-      isSimilar = false;
-      break;
-    }
+    expect(actual[key]).toEqual(expected[key]);
   }
   
-  return isSimilar;
+  return true;
 };
