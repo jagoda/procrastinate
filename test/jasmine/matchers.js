@@ -3,15 +3,15 @@ var matchers = module.exports;
 
 matchers.toBeSimilarTo = function (expected) {
   var actual = this.actual,
-      similar = true,
+      isSimilar = true,
       key;
-  
+      
   for (key in expected) {
     if (actual[key] != expected[key]) {
-      similar = false;
+      isSimilar = false;
       break;
     }
   }
   
-  return similar;
+  return isSimilar;
 };
