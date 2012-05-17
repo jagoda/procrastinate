@@ -8,7 +8,7 @@
   },
   "main": "index",
   "scripts": {
-    "test": "jasmine-node --verbose test"
+    "test": "jasmine-node --matchall --verbose test"
   },
   "dependencies": {},
   "devDependencies": {
