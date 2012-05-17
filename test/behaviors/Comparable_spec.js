@@ -14,6 +14,10 @@ describe("A Comparable object", function () {
     expect(comparable.equalTo('five')).toBe(false);
   });
   
+  it("can test if a value is defined", function () {
+    expect(comparable.defined()).toBe(true);
+  });
+  
   it("will make comparisons to itself by default", function () {
     comparable = new Comparable();
     
@@ -26,10 +30,12 @@ describe("A Comparable object", function () {
     
     expect(comparable.not().equalTo(5)).toBe(false);
     expect(comparable.not().equalTo('five')).toBe(true);
+    expect(comparable.not().defined()).toBe(false);
     
     expect(comparable.not().not()).toBeInstanceOf(Comparable);
     expect(comparable.not().not().equalTo(5)).toBe(true);
     expect(comparable.not().not().equalTo('five')).toBe(false);
+    expect(comparable.not().not().defined()).toBe(true);
   });
 
 });
