@@ -6,25 +6,19 @@ describe("A Comparable object", function () {
   var comparable;
   
   beforeEach(function () {
-    comparable = new Comparable();
-    
-    comparable.valueOf = function () { return 5; };
+    comparable = new Comparable(5);
   });
   
   it("can test for equality", function () {
-    expect(comparable.equalTo(comparable)).toBe(true);
-    expect(comparable.equalTo({})).toBe(false);
-    
     expect(comparable.equalTo(5)).toBe(true);
     expect(comparable.equalTo('five')).toBe(false);
   });
   
-  it("can test for inequality", function () {
-    expect(comparable.not().equalTo(comparable)).toBe(false);
-    expect(comparable.not().equalTo({})).toBe(true);
+  it("can will make comparisons to itself by default", function () {
+    comparable = new Comparable();
     
-    expect(comparable.not().equalTo(5)).toBe(false);
-    expect(comparable.not().equalTo('five')).toBe(true);
+    expect(comparable.equalTo(comparable)).toBe(true);
+    expect(comparable.equalTo(new Comparable())).toBe(false);
   });
 
 });
