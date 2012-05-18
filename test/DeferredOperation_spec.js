@@ -55,28 +55,87 @@ describe("A DeferredOperation", function () {
     expect(count).toEqual(1);
   });
   
-  it("can be rejected after scheduling callbacks", function () {
-    throw "Implement";
+  it("can be rejected with a string message", function () {
+    var result;
+    
+    deferred.then(function () { throw new Error("FIRED!"); });
+    deferred.otherwise(function (rejection) { result = rejection; });
+    expect(result).toBeUndefined();
+    
+    deferred.reject("Rejected as expected.");
+    expect(result).toBeInstanceOf(Error);
+    expect(result.message).toEqual("Rejected as expected.");
   });
   
-  it("can be rejected before scheduling callbacks", function () {
-    throw "Implement";
+  it("can be rejected with an Error object", function () {
+    var error = new Error(),
+        result;
+    
+    deferred.then(function () { throw new Error("FIRED!"); });
+    deferred.otherwise(function (rejection) { result = rejection; });
+    expect(result).toBeUndefined();
+    
+    deferred.reject(error);
+    expect(result).toBe(error);
+  });
+  
+  it("can be rejected before registering handlers", function () {
+    var result;
+    
+    deferred.reject("You are rejected.");
+    deferred.then(function () { throw new Error("FIRED!"); });
+    expect(result).toBeUndefined();
+    
+    deferred.otherwise(function (rejection) { result = rejection; });
+    expect(result).toBeInstanceOf(Error);
+    expect(result.message).toEqual("You are rejected.");
   });
   
   it("can only be rejected once", function () {
-    throw "Implement";
+    var count = 0;
+    
+    deferred.otherwise(function () { count++; });
+    expect(count).toEqual(0);
+    
+    deferred.reject();
+    expect(count).toEqual(1);
+    
+    deferred.reject();
+    expect(count).toEqual(1);
   });
   
   it("cannot be resolved after it has been rejected", function () {
-    throw "Implement";
+    var result;
+    
+    deferred.then(function () { throw new Error("FIRED!"); });
+    deferred.otherwise(function () { result = true; });
+    expect(result).toBeUndefined();
+    
+    deferred.reject();
+    deferred.resolve();
+    expect(result).toBe(true);
   });
   
   it("cannot be rejected after it has been resolved", function () {
-    throw "Implement";
+    var result;
+    
+    deferred.then(function () { result = true; });
+    deferred.otherwise(function () { throw new Error("REJECTED!"); });
+    expect(result).toBeUndefined();
+    
+    deferred.resolve();
+    deferred.reject();
+    expect(result).toBe(true);
   });
   
-  it("can customize its rejection handling", function () {
-    throw "Implement";
+  it("will ignore callbacks after being rejected", function () {
+    deferred.reject();
+    deferred.then(function () { throw new Error("FIRED!"); });
+  });
+  
+  it("will ignore rejection handlers after being resolved", function () {
+    deferred.resolve();
+    deferred.otherwise(function () { throw new Error("REJECTED!"); });
   });
   
   it("can be chained with other deferred operations", function () {
@@ -96,6 +155,65 @@ describe("A DeferredOperation", function () {
     deferred.resolve(42);
     expect(result).toEqual(43);
   });
+  
+  it("can be resolved by a callback", function () {
+    var result;
+    
+    function execute (callback) {
+      callback(42);
+    }
+    
+    deferred.then(function (value) { result = value; });
+    expect(result).toBeUndefined();
+    
+    execute(deferred.callback());
+    expect(result).toEqual(42);
+  });
+  
+  it("can be rejected by a callback", function () {
+    var result;
+    
+    function execute (callback) {
+      callback("You are rejected.");
+    }
+    
+    deferred.otherwise(function (rejection) { result = rejection; });
+    expect(result).toBeUndefined();
+    
+    execute(deferred.errback());
+    expect(result).toBeInstanceOf(Error);
+    expect(result.message).toEqual("You are rejected.");
+  });
+  
+  it("can be resolved by a notifying callback", function () {
+    var result;
+    
+    function execute (callback) {
+      callback(null, 42);
+    };
+    
+    deferred.then(function (value) { result = value; });
+    expect(result).toBeUndefined();
+    
+    execute(deferred.handler());
+    expect(result).toEqual(42);
+  });
+  
+  it("can be rejected by a notifying callback", function () {
+    var error = new Error(),
+        result;
+    
+    function execute (callback) {
+      callback(error);
+    };
+    
+    deferred.otherwise(function (rejection) { result = rejection; });
+    expect(result).toBeUndefined();
+    
+    execute(deferred.handler());
+    expect(result).toBe(error);
+  });
+  
   
   describe("helper", function () {
     
