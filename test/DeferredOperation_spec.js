@@ -265,6 +265,17 @@ describe("A DeferredOperation", function () {
       expect(result).toEqual([ watchedValue ]);
     });
     
+    it("can wait for a condition that is already satisfied", function () {
+      var watchedValue = new WatchedValue(42),
+          result;
+      
+      expect(result).toBeUndefined();
+      when(watchedValue).is().equalTo(42).then(function () {
+        result = true;
+      });
+      expect(result).toBe(true);
+    });
+    
   });
 
 });
