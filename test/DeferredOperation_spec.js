@@ -1,5 +1,6 @@
 var DeferredOperation = require('../lib/DeferredOperation'),
     WatchedValue = require('../lib/WatchedValue'),
+    update = WatchedValue.update,
     when = DeferredOperation.when;
 
 
@@ -274,6 +275,30 @@ describe("A DeferredOperation", function () {
         result = true;
       });
       expect(result).toBe(true);
+    });
+    
+    it("resolves with the original WatchedValue when waiting on a condition", function () {
+      var watchedValue = new WatchedValue(),
+          result;
+          
+      when(watchedValue).is().defined().then(function (value) {
+        result = value;
+      });
+      expect(result).toBeUndefined();
+      
+      update(watchedValue).toBe(true);
+      expect(result).toBe(watchedValue);
+    });
+    
+    it("resolves with the original WatchedValue when waiting on a satisfied condition", function () {
+      var watchedValue = new WatchedValue(true),
+          result;
+         
+      expect(result).toBeUndefined(); 
+      when(watchedValue).is().defined().then(function (value) {
+        result = value;
+      });
+      expect(result).toBe(watchedValue);
     });
     
   });
