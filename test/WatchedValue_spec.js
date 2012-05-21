@@ -50,6 +50,29 @@ describe("A WatchedValue", function () {
     expect(watchedValue.value()).toEqual('five');
   });
   
+  it("can be updated by a notifying callback", function () {
+    function execute (callback) {
+      callback(null, 'five');
+    }
+    
+    expect(watchedValue.value()).toEqual(42);
+    execute(watchedValue.handler());
+    expect(watchedValue.value()).toEqual('five');
+  });
+  
+  it("can handle an error from a notifying callback", function () {
+    var error = new Error("FAILED");
+    
+    function execute (callback) {
+      callback(error);
+    }
+    
+    expect(watchedValue.value()).toEqual(42);
+    expect(function () {
+      execute(watchedValue.handler());
+    }).toThrow(error);
+  });
+  
   
   describe("helper", function () {
   
