@@ -98,5 +98,22 @@ describe("An ExecutionQueue", function () {
       expect(result).toEqual([ 2, 1, 3, 4 ]);
     });
   });
+  
+  it("provides a handler to tasks that can deal with errors", function () {
+    var error = new Error("handled"),
+        result;
+        
+    function task1 (next, handler) {
+      handler(null);
+    }
+    
+    function task2 (next, handler) {
+      handler(error);
+    }
+    
+    expect(function () {
+      queue.run(task1, true).run(task2, true);
+    }).toThrow(error);
+  });
 
 });
