@@ -301,6 +301,22 @@ describe("A DeferredOperation", function () {
       expect(result).toBe(watchedValue);
     });
     
+    it("resolves waiting conditions in the same order they are registered in", function () {
+      var watchedValue = new WatchedValue(),
+          result = [];
+          
+      when(watchedValue).is().defined().then(function () {
+        result.push(1);
+      });
+      when(watchedValue).is().defined().then(function () {
+        result.push(2);
+      });
+      expect(result.length).toEqual(0);
+      
+      watchedValue.update(true);
+      expect(result).toEqual([ 1, 2 ]);
+    });
+    
   });
 
 });
