@@ -115,5 +115,26 @@ describe("An ExecutionQueue", function () {
       queue.run(task1, true).run(task2, true);
     }).toThrow(error);
   });
+  
+  it("can pass arguments between tasks", function () {
+    var finished;
+    
+    function task1 (next) {
+      next(5);
+    }
+    
+    function task2 (value, next) {
+      expect(value).toEqual(5);
+      next();
+    }
+    
+    function task3 (next) {
+      finished = true;
+    }
+    
+    expect(finished).toBeUndefined();
+    queue.run(task1, true).run(task2, true).run(task3, true);
+    expect(finished).toBe(true);
+  });
 
 });
