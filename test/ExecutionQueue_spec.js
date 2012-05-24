@@ -74,7 +74,7 @@ describe("An ExecutionQueue", function () {
     var result = [];
     
     function task1 (next) {
-      setTimeout(function () { result.push(1); next(); }, 200);
+      setTimeout(function () { result.push(1); next(); }, 1000);
     }
     
     function task2 (next) {
