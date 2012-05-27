@@ -1,4 +1,5 @@
-var Bindable = require('../../lib/behaviors/Bindable');
+var Bindable = require('../../lib/behaviors/Bindable'),
+    bind = Bindable.bind;
 
 
 describe("A Bindable object", function () {
@@ -81,6 +82,25 @@ describe("A Bindable object", function () {
       
       var context = { value: 1 },
           bound = Bindable.bind(context, sum, 2);
+      
+      expect(bound(3)).toEqual(6);
+      expect(bound(4)).toEqual(7);
+    });
+    
+    it("can bind using natural language", function () {
+      function sum (a, b) { return this.value + a + b; }
+      
+      var context = { value: 1 },
+          bound = bind(sum).to(context);
+      
+      expect(bound(2, 3)).toEqual(6);
+    });
+    
+    it("can bind with arguments using natural language", function () {
+      function sum (a, b) { return this.value + a + b; }
+      
+      var context = { value: 1 },
+          bound = bind(sum).to(context).withArguments(2);
       
       expect(bound(3)).toEqual(6);
       expect(bound(4)).toEqual(7);

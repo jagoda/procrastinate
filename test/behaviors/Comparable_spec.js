@@ -1,4 +1,5 @@
-var Comparable = require('../../lib/behaviors/Comparable');
+var Comparable = require('../../lib/behaviors/Comparable'),
+    valueOf = Comparable.valueOf;
 
 
 describe("A Comparable object", function () {
@@ -60,6 +61,17 @@ describe("A Comparable object", function () {
     expect(comparable.not().not().equalTo(5)).toBe(true);
     expect(comparable.not().not().equalTo('five')).toBe(false);
     expect(comparable.not().not().defined()).toBe(true);
+  });
+  
+  describe("helper", function () {
+  
+    it("can perform tests using natural language", function () {
+      expect(valueOf(5).is().equalTo(5)).toBe(true);
+      expect(valueOf(5).is().not().equalTo(6)).toBe(true);
+      expect(valueOf('five').is().defined()).toBe(true);
+      expect(valueOf('five').is().not().defined()).toBe(false);
+    });
+  
   });
 
 });
