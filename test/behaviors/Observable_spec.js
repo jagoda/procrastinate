@@ -1,4 +1,5 @@
-var Observable = require('../../lib/behaviors/Observable');
+var Observable = require('../../lib/behaviors/Observable'),
+    when = Observable.when;
 
 
 describe("An Observable object", function () {
@@ -31,6 +32,24 @@ describe("An Observable object", function () {
     
     observable.notifyWith([ 1, 2, 3 ]);
     expect(result).toEqual([ 1, 2, 3 ]);
+  });
+  
+  describe("helper", function () {
+    
+    it("can watch for notifications from an observable object", function () {
+      var result;
+      
+      throw "should return an DeferredOperation or similar?";
+      
+      when(observable).isNotified(function () {
+        result = arguments;
+      });
+      expect(result).toBeUndefined();
+      
+      observable.notify(1, 2, 3);
+      expect(result).toEqual([ 1, 2, 3 ]);
+    });
+    
   });
 
 });
