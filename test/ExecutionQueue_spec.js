@@ -1,5 +1,6 @@
 var DeferredOperation = require('../lib/DeferredOperation'),
-    ExecutionQueue = require('../lib/ExecutionQueue');
+    ExecutionQueue = require('../lib/ExecutionQueue'),
+    run = ExecutionQueue.run;
 
 
 describe("An ExecutionQueue", function () {
@@ -135,6 +136,30 @@ describe("An ExecutionQueue", function () {
     expect(finished).toBeUndefined();
     queue.run(task1, true).run(task2, true).run(task3, true);
     expect(finished).toBe(true);
+  });
+  
+  describe("helper", function () {
+    
+    it("can run a function on a queue using natural language", function () {
+      var result;
+      
+      function task () {
+        result = true;
+      }
+      
+      expect(result).toBeUndefined();
+      run(task).on(queue);
+      expect(result).toBe(true);
+    });
+    
+    it("can specify that a task should run synchronously", function () {
+      throw "Implement";
+    });
+    
+    it("can specify that a task should run asynchronously", function () {
+      throw "Implement";
+    });
+    
   });
 
 });

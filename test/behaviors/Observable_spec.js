@@ -39,9 +39,7 @@ describe("An Observable object", function () {
     it("can watch for notifications from an observable object", function () {
       var result;
       
-      throw "should return an DeferredOperation or similar?";
-      
-      when(observable).isNotified(function () {
+      when(observable).isNotifiedThen(function () {
         result = arguments;
       });
       expect(result).toBeUndefined();

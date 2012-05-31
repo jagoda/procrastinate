@@ -1,4 +1,5 @@
 var DeferredOperation = require('../lib/DeferredOperation'),
+    Observable = require('../lib/behaviors/Observable'),
     WatchedValue = require('../lib/WatchedValue'),
     update = WatchedValue.update,
     when = DeferredOperation.when;
@@ -315,6 +316,19 @@ describe("A DeferredOperation", function () {
       
       watchedValue.update(true);
       expect(result).toEqual([ 1, 2 ]);
+    });
+    
+    it("can wait for an Observable object to be notified", function () {
+      var observable = new Observable(),
+          result;
+          
+      when(observable).isNotified().then(function () {
+        result = true;
+      });
+      expect(result).toBeUndefined();
+      
+      observable.notify();
+      expect(result).toBe(true);
     });
     
   });
