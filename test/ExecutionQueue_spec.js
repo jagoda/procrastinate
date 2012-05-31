@@ -153,11 +153,61 @@ describe("An ExecutionQueue", function () {
     });
     
     it("can specify that a task should run synchronously", function () {
-      throw "Implement";
+      var result = [];
+      
+      function task1 (next) {
+        setTimeout(function () { result.push(1); next(); }, 500);
+      }
+      
+      function task2 (next) {
+        setTimeout(function () { result.push(2); next(); }, 100);
+      }
+      
+      function task3 (next) {
+        setTimeout(function () { result.push(3); next(); }, 300);
+      }
+      
+      runs(function () {
+        run(task1).synchronously().on(queue);
+        run(task2).synchronously().on(queue);
+        run(task3).synchronously().on(queue);
+        expect(result.length).toEqual(0);
+      });
+      waitsFor(function () {
+        return result.length == 3;
+      });
+      runs(function () {
+        expect(result).toEqual([ 1, 2, 3 ]);
+      });
     });
     
     it("can specify that a task should run asynchronously", function () {
-      throw "Implement";
+      var result = [];
+      
+      function task1 (next) {
+        setTimeout(function () { result.push(1); next(); }, 500);
+      }
+      
+      function task2 (next) {
+        setTimeout(function () { result.push(2); next(); }, 100);
+      }
+      
+      function task3 (next) {
+        setTimeout(function () { result.push(3); next(); }, 300);
+      }
+      
+      runs(function () {
+        run(task1).asynchronously().on(queue);
+        run(task2).asynchronously().on(queue);
+        run(task3).asynchronously().on(queue);
+        expect(result.length).toEqual(0);
+      });
+      waitsFor(function () {
+        return result.length == 3;
+      });
+      runs(function () {
+        expect(result).toEqual([ 2, 3, 1 ]);
+      });
     });
     
   });
