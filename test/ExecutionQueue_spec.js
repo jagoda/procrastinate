@@ -98,6 +98,15 @@ describe("An ExecutionQueue", function () {
     runs(function () {
       expect(result).toEqual([ 2, 1, 3, 4 ]);
     });
+    runs(function () {
+      result = [];
+      queue.run(task3, true).run(task1).run(task2).run(task4, true);
+      expect(result.length).toEqual(0);
+    });
+    waitsFor(function () { return result.length == 4; });
+    runs(function () {
+      expect(result).toEqual([ 3, 2, 1, 4 ]);
+    });
   });
   
   it("provides a handler to tasks that can deal with errors", function () {
