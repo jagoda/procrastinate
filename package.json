@@ -4,7 +4,8 @@
   "description": "Utilities for asynchronous programming in JavaScript.",
   "version": "0.0.2",
   "repository": {
-    "url": ""
+    "type": "git",
+    "url": "git://github.com/jagoda/procrastinate.git"
   },
   "main": "index",
   "scripts": {
