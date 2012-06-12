@@ -1,0 +1,21 @@
+{
+  "author": "Jeff Jagoda <jeffrey.jagoda@gmail.com>",
+  "name": "procrastinate",
+  "description": "Utilities for asynchronous programming in JavaScript.",
+  "version": "0.0.2",
+  "repository": {
+    "url": ""
+  },
+  "main": "index",
+  "scripts": {
+    "test": "jasmine-node --matchall --verbose test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine-node": "*"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
