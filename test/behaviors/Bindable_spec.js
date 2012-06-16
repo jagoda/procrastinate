@@ -87,7 +87,11 @@ describe("A Bindable object", function () {
       expect(bound(4)).toEqual(7);
     });
     
-    it("can bind using natural language", function () {
+  });
+  
+  describe("using natural language", function () {
+    
+    it("can bind a cotext to a function", function () {
       function sum (a, b) { return this.value + a + b; }
       
       var context = { value: 1 },
@@ -96,11 +100,30 @@ describe("A Bindable object", function () {
       expect(bound(2, 3)).toEqual(6);
     });
     
-    it("can bind with arguments using natural language", function () {
+    it("can bind arguments to a function", function () {
+      function sum (a, b) { return a + b; }
+      
+      var bound = bind(sum).withArguments(2);
+      
+      expect(bound(3)).toEqual(5);
+      expect(bound(4)).toEqual(6);
+    });
+    
+    it("can bind to a context with arguments", function () {
       function sum (a, b) { return this.value + a + b; }
       
       var context = { value: 1 },
           bound = bind(sum).to(context).withArguments(2);
+      
+      expect(bound(3)).toEqual(6);
+      expect(bound(4)).toEqual(7);
+    });
+    
+    it("can bind with arguments to a context", function () {
+      function sum (a, b) { return this.value + a + b; }
+      
+      var context = { value: 1 },
+          bound = bind(sum).withArguments(2).to(context);
       
       expect(bound(3)).toEqual(6);
       expect(bound(4)).toEqual(7);

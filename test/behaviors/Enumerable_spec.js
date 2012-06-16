@@ -1,7 +1,5 @@
 var Enumerable = require('../../lib/behaviors/Enumerable'),
-    forEachKeyIn = Enumerable.forEachKeyIn,
-    forEachValueIn = Enumerable.forEachValueIn,
-    forEachPairIn = Enumerable.forEachPairIn;
+    forEach = Enumerable.forEach;
 
 
 describe("An Enumerable object", function () {
@@ -12,18 +10,99 @@ describe("An Enumerable object", function () {
     enumerable = new Enumerable();
     enumerable.number = 42;
     enumerable.string = 'forty-two';
+    
+    Object.defineProperty(enumerable, 'foo', {
+      configurable: true,
+      enumerable: false,
+      value: 'bar'
+    });
   });
-
-  it("can execute a callback for all key-value pairs on itelf", function () {
+  
+  it("can execute a callback for all public keys on itself", function () {
+    var result = {};
+    
+    Object.defineProperty(enumerable, 'bomb', {
+      configurable: true,
+      enumerable: true,
+      
+      get: function () {
+        throw new Error("Key evaluated");
+      }
+    });
+    
+    expect(result).toEqual([]);
+    enumerable.key(function (key) {
+      result[key] = true;
+    });
+    expect(result).toEqual({ bomb: true, number: true, string: true });
+  });
+  
+  it("can execute a callback for all public values on itself", function () {
     var result = {};
     
     expect(result).toEqual({});
-    enumerable.forEach(function (key, value) {
-      if (this.hasOwnProperty(key) && key[0] != '_') {
-        result[key] = value;
+    enumerable.value(function (value) {
+      result[value] = true;
+    });
+    expect(result).toEqual({ 42: true, 'forty-two': true });
+  });
+  
+  it("can execute a callback for all public key-value pairs on itself", function () {
+    var count = 0,
+        result = {};
+    
+    Object.defineProperty(enumerable, 'compute', {
+      configurable: true,
+      enumerable: true,
+      
+      get: function () {
+        return count++;
       }
     });
-    expect(result).toEqual({ number: 42, string: 'forty-two' });
+    
+    expect(result).toEqual({});
+    enumerable.mapping(function (key, value) {
+      result[key] = value;
+    });
+    expect(result).toEqual({ number: 42, string: 'forty-two', compute: 0 });
+    expect(count).not.toEqual(result.compute);
+    expect(count).toEqual(1);
+  });
+  
+  it("can execute a callback for all properties on itself", function () {
+    var result = {};
+    
+    function test () { return 'this is a test'; }
+    
+    Object.defineProperty(enumerable, 'test', {
+      configurable: true,
+      enumerable: true,
+      
+      get: test
+    });
+    
+    expect(result).toEqual({});
+    enumerable.property(function (name, descriptor) {
+      if (name[0] === '_') {
+        result[name] = true;
+      }
+      else {
+        if (descriptor.get) {
+          result[name] = descriptor.get;
+        }
+        else {
+          result[name] = descriptor.value;
+        }
+      }
+    });
+    expect(result).toEqual({
+      foo: 'bar',
+      number: 42,
+      string: 'forty-two',
+      test: test,
+      _value: true
+    });
+    expect(result.test()).toEqual('this is a test');
   });
   
   it("can wrap an existing object", function () {
@@ -32,7 +111,7 @@ describe("An Enumerable object", function () {
         result = {};
         
     expect(result).toEqual({});
-    enumerable.forEach(function (key, value) {
+    enumerable.mapping(function (key, value) {
       if (this.hasOwnProperty(key)) {
         result[key] = value;
       }
@@ -41,43 +120,109 @@ describe("An Enumerable object", function () {
     expect(result).not.toBe(object);
   });
   
-  describe("helpers", function () {
+  describe("using natural language", function () {
   
-    it("can execute a function for each key in an object using natural language", function () {
-      var keys = [],
-          object = { 'one': 1, 'two': 2, 'three': 3 };
+    var object;
+    
+    beforeEach(function () {
+      object = {
+        number: 42,
+        string: 'forty-two',
+        _value: 'private'
+      };
       
-      expect(keys.length).toEqual(0);
-      forEachKeyIn(object).do(function (key) {
-        keys.push(key);
+      Object.defineProperty(object, 'foo', {
+        configurable: true,
+        enumerable: false,
+        value: 'bar'
       });
-      expect(keys).toEqual([ 'one', 'two', 'three' ]);
+    });
+  
+    it("can execute a function for each key on an object", function () {
+      var result = {};
+      
+      Object.defineProperty(object, 'bomb', {
+        configurable: true,
+        enumerable: true,
+        
+        get: function () {
+          throw new Error("Key evaluated");
+        }
+      });
+      
+      expect(result).toEqual({});
+      forEach('key').on(object).do(function (key) {
+        result[key] = true;
+      });
+      expect(result).toEqual({ bomb: true, number: true, string: true });
     });
     
-    it("can execute a function for each value in an object using natural language", function () {
-      var values = [],
-          object = { 'one': 1, 'two': 2, 'three': 3 };
-      
-      expect(values.length).toEqual(0);
-      forEachValueIn(object).do(function (value) {
-        values.push(value);
+    it("can execute a function for each value on an object", function () {
+      var result = {};
+    
+      expect(result).toEqual({});
+      forEach('value').on(object).do(function (value) {
+        result[value] = true;
       });
-      expect(values).toEqual([ 1, 2, 3 ]);
+      expect(result).toEqual({ 42: true, 'forty-two': true });
     });
     
-    it("can execute a function for each key-value pair in an object using natural language", function () {
-      var pairs = [],
-          object = { 'one': 1, 'two': 2, 'three': 3 };
-      
-      expect(pairs.length).toEqual(0);
-      forEachPairIn(object).do(function (key, value) {
-        pairs.push([ key, value ]);
+    it("can executen a function for each key-value pair on an object", function () {
+      var count = 0,
+        result = {};
+    
+      Object.defineProperty(object, 'compute', {
+        configurable: true,
+        enumerable: true,
+        
+        get: function () {
+          return count++;
+        }
       });
-      expect(pairs).toEqual([
-        [ 'one', 1 ],
-        [ 'two', 2 ],
-        [ 'three', 3 ]
-      ]);
+      
+      expect(result).toEqual({});
+      forEach('mapping').on(object).do(function (key, value) {
+        result[key] = value;
+      });
+      expect(result).toEqual({ number: 42, string: 'forty-two', compute: 0 });
+      expect(count).not.toEqual(result.compute);
+      expect(count).toEqual(1);
+    });
+    
+    it("can execute a function for each property on an object", function () {
+      var result = {};
+    
+      function test () { return 'this is a test'; }
+      
+      Object.defineProperty(object, 'test', {
+        configurable: true,
+        enumerable: true,
+        
+        get: test
+      });
+      
+      expect(result).toEqual({});
+      forEach('property').on(object).do(function (name, descriptor) {
+        if (name[0] === '_') {
+          result[name] = true;
+        }
+        else {
+          if (descriptor.get) {
+            result[name] = descriptor.get;
+          }
+          else {
+            result[name] = descriptor.value;
+          }
+        }
+      });
+      expect(result).toEqual({
+        foo: 'bar',
+        number: 42,
+        string: 'forty-two',
+        test: test,
+        _value: true
+      });
+      expect(result.test()).toEqual('this is a test');
     });
   
   });

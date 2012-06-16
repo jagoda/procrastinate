@@ -27,7 +27,7 @@ describe("A Mixable object", function () {
   });
   
   
-  describe("helper", function () {
+  describe("using natural language", function () {
     
     it("can inject properties from another object into a target object", function () {
       var source = { foo: 'bar', hello: 'world' },
