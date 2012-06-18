@@ -34,7 +34,7 @@ describe("An Observable object", function () {
     expect(result).toEqual([ 1, 2, 3 ]);
   });
   
-  describe("helper", function () {
+  describe("using natural language", function () {
     
     it("can watch for notifications from an observable object", function () {
       var result;

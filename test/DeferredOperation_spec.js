@@ -168,7 +168,7 @@ describe("A DeferredOperation", function () {
     deferred.then(function (value) { result = value; });
     expect(result).toBeUndefined();
     
-    execute(deferred.callback());
+    execute(deferred.callback);
     expect(result).toEqual(42);
   });
   
@@ -182,7 +182,7 @@ describe("A DeferredOperation", function () {
     deferred.otherwise(function (rejection) { result = rejection; });
     expect(result).toBeUndefined();
     
-    execute(deferred.errback());
+    execute(deferred.errback);
     expect(result).toBeInstanceOf(Error);
     expect(result.message).toEqual("You are rejected.");
   });
@@ -197,7 +197,7 @@ describe("A DeferredOperation", function () {
     deferred.then(function (value) { result = value; });
     expect(result).toBeUndefined();
     
-    execute(deferred.handler());
+    execute(deferred.handler);
     expect(result).toEqual(42);
   });
   
@@ -212,18 +212,18 @@ describe("A DeferredOperation", function () {
     deferred.otherwise(function (rejection) { result = rejection; });
     expect(result).toBeUndefined();
     
-    execute(deferred.handler());
+    execute(deferred.handler);
     expect(result).toBe(error);
   });
   
   
-  describe("helper", function () {
+  describe("using natural language", function () {
     
     it("can wait for a WatchedValue to satisfy a positive condition", function () {
       var watchedValue = new WatchedValue(),
           result;
           
-      when(watchedValue).is().equalTo(42).then(function () {
+      when(watchedValue).is.equalTo(42).then(function () {
         result = arguments;
       });
       expect(result).toBeUndefined();
@@ -239,7 +239,7 @@ describe("A DeferredOperation", function () {
       var watchedValue = new WatchedValue(42),
           result;
           
-      when(watchedValue).is().not().equalTo(42).then(function () {
+      when(watchedValue).is.not.equalTo(42).then(function () {
         result = arguments;
       });
       expect(result).toBeUndefined();
@@ -255,7 +255,7 @@ describe("A DeferredOperation", function () {
       var watchedValue = new WatchedValue(),
           result;
           
-      when(watchedValue).is().not().not().equalTo(42).then(function () {
+      when(watchedValue).is.not.not.equalTo(42).then(function () {
         result = arguments;
       });
       expect(result).toBeUndefined();
@@ -272,7 +272,7 @@ describe("A DeferredOperation", function () {
           result;
       
       expect(result).toBeUndefined();
-      when(watchedValue).is().equalTo(42).then(function () {
+      when(watchedValue).is.equalTo(42).then(function () {
         result = true;
       });
       expect(result).toBe(true);
@@ -282,7 +282,7 @@ describe("A DeferredOperation", function () {
       var watchedValue = new WatchedValue(),
           result;
           
-      when(watchedValue).is().defined().then(function (value) {
+      when(watchedValue).is.defined.then(function (value) {
         result = value;
       });
       expect(result).toBeUndefined();
@@ -296,7 +296,7 @@ describe("A DeferredOperation", function () {
           result;
          
       expect(result).toBeUndefined(); 
-      when(watchedValue).is().defined().then(function (value) {
+      when(watchedValue).is.defined.then(function (value) {
         result = value;
       });
       expect(result).toBe(watchedValue);
@@ -306,10 +306,10 @@ describe("A DeferredOperation", function () {
       var watchedValue = new WatchedValue(),
           result = [];
           
-      when(watchedValue).is().defined().then(function () {
+      when(watchedValue).is.defined.then(function () {
         result.push(1);
       });
-      when(watchedValue).is().defined().then(function () {
+      when(watchedValue).is.defined.then(function () {
         result.push(2);
       });
       expect(result.length).toEqual(0);
@@ -322,7 +322,7 @@ describe("A DeferredOperation", function () {
       var observable = new Observable(),
           result;
           
-      when(observable).isNotified().then(function () {
+      when(observable).isNotified.then(function () {
         result = true;
       });
       expect(result).toBeUndefined();

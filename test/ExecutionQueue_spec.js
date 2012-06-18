@@ -147,9 +147,9 @@ describe("An ExecutionQueue", function () {
     expect(finished).toBe(true);
   });
   
-  describe("helper", function () {
+  describe("using natural language", function () {
     
-    it("can run a function on a queue using natural language", function () {
+    it("can run a function on a queue", function () {
       var result;
       
       function task () {

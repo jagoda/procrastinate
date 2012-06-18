@@ -14,13 +14,24 @@ describe("A WatchedValue", function () {
   });
   
   it("can have an initial value", function () {
-    expect(watchedValue.value()).toEqual(42);
+    expect(watchedValue.value).toEqual(42);
   });
   
   it("can modify its value", function () {
-    expect(watchedValue.value(42)).toEqual(42);
+    expect(watchedValue.value).toEqual(42);
     watchedValue.update(false);
-    expect(watchedValue.value()).toEqual(false);
+    expect(watchedValue.value).toEqual(false);
+  });
+  
+  it("can be assigned a new value", function () {
+    var result;
+    
+    watchedValue.observe(function (value) {
+      result = value;
+    });
+    expect(result).toBeUndefined();
+    watchedValue.value = 42;
+    expect(result).toEqual(42);
   });
   
   it("can be watched for changes to its value", function () {
@@ -35,9 +46,9 @@ describe("A WatchedValue", function () {
   });
   
   it("can return a Comparable object for comparison operations", function () {
-    expect(watchedValue.is()).toBeInstanceOf(Comparable);
-    expect(watchedValue.is().equalTo(42)).toBe(true);
-    expect(watchedValue.is().not().equalTo(42)).toBe(false);
+    expect(watchedValue.is).toBeInstanceOf(Comparable);
+    expect(watchedValue.is.equalTo(42)).toBe(true);
+    expect(watchedValue.is.not.equalTo(42)).toBe(false);
   });
   
   it("can be updated by a callback", function () {
@@ -45,9 +56,9 @@ describe("A WatchedValue", function () {
       callback('five');
     }
     
-    expect(watchedValue.value()).toEqual(42);
-    execute(watchedValue.callback());
-    expect(watchedValue.value()).toEqual('five');
+    expect(watchedValue.value).toEqual(42);
+    execute(watchedValue.callback);
+    expect(watchedValue.value).toEqual('five');
   });
   
   it("can be updated by a notifying callback", function () {
@@ -55,9 +66,9 @@ describe("A WatchedValue", function () {
       callback(null, 'five');
     }
     
-    expect(watchedValue.value()).toEqual(42);
-    execute(watchedValue.handler());
-    expect(watchedValue.value()).toEqual('five');
+    expect(watchedValue.value).toEqual(42);
+    execute(watchedValue.handler);
+    expect(watchedValue.value).toEqual('five');
   });
   
   it("can handle an error from a notifying callback", function () {
@@ -67,14 +78,14 @@ describe("A WatchedValue", function () {
       callback(error);
     }
     
-    expect(watchedValue.value()).toEqual(42);
+    expect(watchedValue.value).toEqual(42);
     expect(function () {
-      execute(watchedValue.handler());
+      execute(watchedValue.handler);
     }).toThrow(error);
   });
   
   
-  describe("helper", function () {
+  describe("using natural language", function () {
   
     it("can get the value of a WatchedValue", function () {
       expect(valueOf(watchedValue)).toEqual(42);
